@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>dice</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+        }
+
+        .dice-container {
+            perspective: 1000px;
+        }
+
+        .dice {
+            width: 100px;
+            height: 100px;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 1s;
+        }
+
+        .dice-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-color: white;
+            border: 2px solid #000;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .pip {
+            background-color: black;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            position: absolute;
+        }
+
+        /* Pip positions for each face */
+        .face-1 .pip { top: 50%; left: 50%; transform: translate(-50%, -50%); }
+
+        .face-2 .pip:nth-child(1) { top: 20%; left: 20%; }
+        .face-2 .pip:nth-child(2) { bottom: 20%; right: 20%; }
+
+        .face-3 .pip:nth-child(1) { top: 20%; left: 20%; }
+        .face-3 .pip:nth-child(2) { top: 50%; left: 50%; transform: translate(-50%, -50%); }
+        .face-3 .pip:nth-child(3) { bottom: 20%; right: 20%; }
+
+        .face-4 .pip:nth-child(1), .face-4 .pip:nth-child(2) { top: 20%; }
+        .face-4 .pip:nth-child(3), .face-4 .pip:nth-child(4) { bottom: 20%; }
+        .face-4 .pip:nth-child(1), .face-4 .pip:nth-child(3) { left: 20%; }
+        .face-4 .pip:nth-child(2), .face-4 .pip:nth-child(4) { right: 20%; }
+
+        .face-5 .pip:nth-child(1), .face-5 .pip:nth-child(2) { top: 20%; }
+        .face-5 .pip:nth-child(3) { top: 50%; left: 50%; transform: translate(-50%, -50%); }
+        .face-5 .pip:nth-child(4), .face-5 .pip:nth-child(5) { bottom: 20%; }
+        .face-5 .pip:nth-child(1), .face-5 .pip:nth-child(4) { left: 20%; }
+        .face-5 .pip:nth-child(2), .face-5 .pip:nth-child(5) { right: 20%; }
+
+        .face-6 .pip:nth-child(1), .face-6 .pip:nth-child(4) { left: 20%; }
+        .face-6 .pip:nth-child(3), .face-6 .pip:nth-child(6) { right: 20%; }
+        .face-6 .pip:nth-child(2), .face-6 .pip:nth-child(5) { left: 50%; transform: translateX(-50%); }
+        .face-6 .pip:nth-child(1), .face-6 .pip:nth-child(2), .face-6 .pip:nth-child(3) { top: 20%; }
+        .face-6 .pip:nth-child(4), .face-6 .pip:nth-child(5), .face-6 .pip:nth-child(6) { bottom: 20%; }
+
+        .dice-face:nth-child(1) { transform: translateZ(50px); }
+        .dice-face:nth-child(2) { transform: rotateY(180deg) translateZ(50px); }
+        .dice-face:nth-child(3) { transform: rotateY(-90deg) translateZ(50px); }
+        .dice-face:nth-child(4) { transform: rotateY(90deg) translateZ(50px); }
+        .dice-face:nth-child(5) { transform: rotateX(-90deg) translateZ(50px); }
+        .dice-face:nth-child(6) { transform: rotateX(90deg) translateZ(50px); }
+
+        .roll-button {
+            padding: 10px 20px;
+            font-size: 18px;
+            cursor: pointer;
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .roll-button:hover {
+            background-color: #161616;
+        }
+
+        @keyframes roll {
+            0% { transform: rotateX(0) rotateY(0) rotateZ(0); }
+            100% { transform: rotateX(720deg) rotateY(720deg) rotateZ(720deg); }
+        }
+
+        .rolling {
+            animation: roll 1s linear;
+        }
+
+        @media (max-width: 600px) {
+            .dice {
+                width: 80px;
+                height: 80px;
+            }
+
+            .pip {
+                width: 14px;
+                height: 14px;
+            }
+
+            .dice-face:nth-child(1) { transform: translateZ(40px); }
+            .dice-face:nth-child(2) { transform: rotateY(180deg) translateZ(40px); }
+            .dice-face:nth-child(3) { transform: rotateY(-90deg) translateZ(40px); }
+            .dice-face:nth-child(4) { transform: rotateY(90deg) translateZ(40px); }
+            .dice-face:nth-child(5) { transform: rotateX(-90deg) translateZ(40px); }
+            .dice-face:nth-child(6) { transform: rotateX(90deg) translateZ(40px); }
+            .game-container {
+                transform: scale(0.8);
+            }
+        }
+
+        .game-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="dice-container">
+            <div class="dice" aria-live="polite" aria-label="サイコロ">
+                <div class="dice-face face-1"><div class="pip"></div></div>
+                <div class="dice-face face-2"><div class="pip"></div><div class="pip"></div></div>
+                <div class="dice-face face-3"><div class="pip"></div><div class="pip"></div><div class="pip"></div></div>
+                <div class="dice-face face-4"><div class="pip"></div><div class="pip"></div><div class="pip"></div><div class="pip"></div></div>
+                <div class="dice-face face-5"><div class="pip"></div><div class="pip"></div><div class="pip"></div><div class="pip"></div><div class="pip"></div></div>
+                <div class="dice-face face-6"><div class="pip"></div><div class="pip"></div><div class="pip"></div><div class="pip"></div><div class="pip"></div><div class="pip"></div></div>
+            </div>
+        </div>
+        <button class="roll-button" onclick="rollDice()">サイコロを振る</button>
+    </div>
+
+    <script>
+        function rollDice() {
+            const dice = document.querySelector('.dice');
+            const result = Math.floor(Math.random() * 6) + 1;
+            dice.classList.add('rolling');
+            
+            setTimeout(() => {
+                dice.classList.remove('rolling');
+                dice.style.transform = getRotation(result);
+                dice.setAttribute('aria-label', `サイコロの目: ${result}`);
+            }, 1000);
+        }
+
+        function getRotation(result) {
+            switch(result) {
+                case 1: return 'rotateX(0deg) rotateY(0deg)';
+                case 2: return 'rotateY(-180deg)';
+                case 3: return 'rotateY(-90deg)';
+                case 4: return 'rotateY(90deg)';
+                case 5: return 'rotateX(-90deg)';
+                case 6: return 'rotateX(90deg)';
+            }
+        }
+    </script>
+</body>
+</html>
